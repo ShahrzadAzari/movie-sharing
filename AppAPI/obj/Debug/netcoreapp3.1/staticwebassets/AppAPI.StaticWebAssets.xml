@@ -1,0 +1,5 @@
+﻿<StaticWebAssets Version="1.0">
+  <ContentRoot BasePath="/Identity" Path="C:\Users\ASUS\.nuget\packages\microsoft.aspnetcore.identity.ui\3.1.0-preview3.19555.2\staticwebassets\V4\" />
+  <ContentRoot BasePath="_content/BlazorInputFile" Path="C:\Users\ASUS\.nuget\packages\blazorinputfile\0.2.0\build\..\staticwebassets\" />
+  <ContentRoot BasePath="_content/DataJuggler.Blazor.FileUpload" Path="C:\Users\ASUS\.nuget\packages\datajuggler.blazor.fileupload\1.3.5\build\..\staticwebassets\" />
+</StaticWebAssets>

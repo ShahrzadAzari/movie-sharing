@@ -1,0 +1,9 @@
+C:\git\AP98992\final_project\MovieSharing\SharedData\bin\Debug\netstandard2.1\SharedData.deps.json
+C:\git\AP98992\final_project\MovieSharing\SharedData\bin\Debug\netstandard2.1\SharedData.dll
+C:\git\AP98992\final_project\MovieSharing\SharedData\bin\Debug\netstandard2.1\SharedData.pdb
+C:\git\AP98992\final_project\MovieSharing\SharedData\obj\Debug\netstandard2.1\SharedData.csprojAssemblyReference.cache
+C:\git\AP98992\final_project\MovieSharing\SharedData\obj\Debug\netstandard2.1\SharedData.AssemblyInfoInputs.cache
+C:\git\AP98992\final_project\MovieSharing\SharedData\obj\Debug\netstandard2.1\SharedData.AssemblyInfo.cs
+C:\git\AP98992\final_project\MovieSharing\SharedData\obj\Debug\netstandard2.1\SharedData.csproj.CoreCompileInputs.cache
+C:\git\AP98992\final_project\MovieSharing\SharedData\obj\Debug\netstandard2.1\SharedData.dll
+C:\git\AP98992\final_project\MovieSharing\SharedData\obj\Debug\netstandard2.1\SharedData.pdb

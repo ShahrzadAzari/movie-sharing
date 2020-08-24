@@ -1,0 +1,138 @@
+@page "/you/add"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@using SharedData
+@using Requests
+@using System.Net.Http
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject Tewr.Blazor.FileReader.IFileReaderService fileReader
+@inject Movie movie
+@inject Files theFile
+
+<div class="topnav" id="myTopnav">
+  <a href="/">Home</a>
+  <a href="/movies">Movies</a>
+    <AuthorizeView>
+        <Authorized>
+        <a href="/you/movies">Your Movies</a>
+        <a href="/you/add" class="active">Add Movie</a>
+        <a href="/logout">Log out</a>
+        </Authorized>
+        <NotAuthorized>
+        <a href="/register">Sign up</a>
+        <a href="/login">Log in</a>
+        </NotAuthorized>
+    </AuthorizeView>
+</div>
+
+<div class="container" style="width: 60%; padding:10px;">
+  <div class="card">
+      <div class="card-body" style="margin: 30px 20px;">
+          <h5 class="card-title" style="margin-bottom: 20px;">Please enter movie details:</h5>
+          <EditForm Model="MovieDataModel" OnValidSubmit="CheckSubmit">
+              <DataAnnotationsValidator />
+              <ValidationSummary />
+                @if (ShowErrors)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        <p style="margin-bottom: 1px;">@Error</p>
+                    </div>
+                }
+              <div class="form-group row">
+                  <label for="title" class="col-25">Title</label>
+                  <div class="col-75">
+                    <InputText type="text" class="form-control" @bind-Value="MovieDataModel.Title"/>
+                    <ValidationMessage For="@(() => MovieDataModel.Title)" />
+                  </div>
+              </div>
+              <div class="form-group row">
+                  <label for="director" class="col-25">Director</label>
+                  <div class="col-75">
+                    <InputText type="text" class="form-control" @bind-Value="MovieDataModel.Director"/>
+                    <ValidationMessage For="@(() => MovieDataModel.Director)" />
+                  </div>
+              </div>
+              <div class="form-group row">
+                  <label for="genre" class="col-25">Genre</label>
+                  <div class="col-75">
+                      <InputText type="text" class="form-control" @bind-Value="MovieDataModel.Genre" />
+                      <ValidationMessage For="@(() => MovieDataModel.Genre)" />
+                  </div>
+              </div>
+              <div class="form-group row">
+                  <label for="year" class="col-25">Year</label>
+                  <div class="col-75">
+                    <InputNumber type="number" class="form-control" @bind-Value="MovieDataModel.Year"/>
+                    <ValidationMessage For="@(() => MovieDataModel.Year)" />
+                  </div>
+              </div>
+              <div class="form-group row">
+                  <label for="imdb" class="col-25">Imdb</label>
+                  <div class="col-75">
+                    <InputNumber type="number" class="form-control" @bind-Value="MovieDataModel.Imdb"/>
+                    <ValidationMessage For="@(() => MovieDataModel.Imdb)" />
+                  </div>
+              </div>
+              <div class="form-group row">
+                  <label for="summery" class="col-25">Summery</label>
+                  <div class="col-75">
+                    <InputTextArea type="text" class="form-control" @bind-Value="MovieDataModel.Summery" />
+                    <ValidationMessage For="@(() => MovieDataModel.Summery)" />
+                  </div>
+              </div>
+
+                <div class="form-group row">
+                    <label for="summery" class="col-25">Cover</label>
+                    <div class="col-75">
+                        <input type="file" @ref="theFile.inputReference" @onchange="async () => await theFile.OpenFileAsync()"/>
+                        <ValidationMessage For="@(() => MovieDataModel.ImageUrl)" />
+                    </div>
+                </div>
+
+              <button type="submit" class="btn btn-primary" style="float: right;"> Add </button>
+          </EditForm>
+      </div>
+  </div>
+
+</div>
+
+
+@code{   
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask {get;set;}
+    private MovieDataModel MovieDataModel = new MovieDataModel();
+    private string UserName = "";
+    protected override async void OnInitialized()
+    {
+        var auth = await authenticationStateTask;
+        UserName = auth.User.Identity.Name;
+        movie = new Movie(Http);
+        theFile = new Files(Http , fileReader);
+    }
+    private bool ShowErrors;
+    private string Error = "";
+
+    private async Task CheckSubmit()
+    {
+        var response = await theFile.UploadFileAsync();
+        if(response == null)
+        {
+            Error = "Please upload an image for cover.";
+            ShowErrors = true;
+        }
+        else if(response.IsSuccessStatusCode)
+        {
+            string name = await response.Content.ReadAsStringAsync();
+            MovieDataModel.ImageUrl = "/covers/" + name;
+            MovieDataModel.UserId = UserName;
+            await movie.AddingMovie(MovieDataModel);
+            NavigationManager.NavigateTo("/you/movies" , true);
+        }
+        else
+        {
+            Error = await response.Content.ReadAsStringAsync();
+            ShowErrors = true;
+        }
+    }
+
+}

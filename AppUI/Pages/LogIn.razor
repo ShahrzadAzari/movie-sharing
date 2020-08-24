@@ -1,0 +1,80 @@
+@page "/login"
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+@using SharedData;
+
+<div class="topnav" id="myTopnav">
+  <a href="/">Home</a>
+  <a href="/movies">Movies</a>
+    <AuthorizeView>
+        <Authorized>
+        <a href="/you/movies">Your Movies</a>
+        <a href="/you/add">Add Movie</a>
+        <a href="/logout">Log out</a>
+        </Authorized>
+        <NotAuthorized>
+        <a href="/register">Sign up</a>
+        <a href="/login" class="active">Log in</a>
+        </NotAuthorized>
+    </AuthorizeView>
+</div>
+
+
+<div class="container" style="width: 35%; padding:10px;">
+    <div class="card">
+      <div class="card-body" style="margin: 20px 20px;">
+          <h5 class="card-title" style="margin-bottom: 20px;">Please enter username and password:</h5>
+            <EditForm Model="loginModel" OnValidSubmit="HandleLogin">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                @if (ShowErrors)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        <p style="margin-bottom: 1px;">@Error</p>
+                    </div>
+                }
+                <div class="form-group row">
+                    <label for="username" class="col-25">Username</label>
+                    <div class="col-75">
+                        <InputText Id="text" Class="form-control" @bind-Value="loginModel.Username" />
+                        <ValidationMessage For="@(() => loginModel.Username)" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="password" class="col-25">Password</label>
+                    <div class="col-75">
+                        <InputText Id="password" type="password" Class="form-control" @bind-Value="loginModel.Password" />
+                        <ValidationMessage For="@(() => loginModel.Password)" />
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="float: right;"> Submit </button>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+
+@code {
+
+    private LoginModel loginModel = new LoginModel();
+    private bool ShowErrors;
+    private string Error = "";
+
+    private async Task HandleLogin()
+    {
+        ShowErrors = false;
+
+        var result = await AuthService.Login(loginModel);
+
+        if (result.Successful)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            Error = result.Error;
+            ShowErrors = true;
+        }
+    }
+
+}

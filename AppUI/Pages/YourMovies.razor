@@ -1,0 +1,209 @@
+@page "/you/movies"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@using SharedData
+@using Requests
+@using System.Net.Http
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject Tewr.Blazor.FileReader.IFileReaderService fileReader
+@inject Movie movie
+@inject Files theFile
+
+
+<div class="topnav" id="myTopnav">
+  <a href="/">Home</a>
+  <a href="/movies">Movies</a>
+    <AuthorizeView>
+        <Authorized>
+        <a href="/you/movies" class="active">Your Movies</a>
+        <a href="/you/add">Add Movie</a>
+        <a href="/logout">Log out</a>
+        </Authorized>
+        <NotAuthorized>
+        <a href="/register">Sign up</a>
+        <a href="/login">Log in</a>
+        </NotAuthorized>
+    </AuthorizeView>
+</div>
+
+<div class="container" style="padding:10px;">
+  <div class="row justify-content-around">
+  @foreach(MovieDataModel movie in AllYourMovies)
+  {
+    <div class="card col-5" style=" margin: 30px;">
+      <img src="@movie.ImageUrl" alt="cover" style="width:100% ; margin:15px 0px">
+      <div class="container" style="margin: 10px 0px;">
+        <h5><b>Title: </b>@movie.Title</h5>
+        <h5><b>Director: </b>@movie.Director</h5>
+        <h5><b>Genre: </b>@movie.Genre</h5>
+        <h5><b>Year: </b>@movie.Year</h5>
+        <h5><b>Imdb: </b>@movie.Imdb</h5>
+        <h5><b>Summery: </b></h5>
+        <p>@movie.Summery</p>
+        <p>
+          <button type="button" class="btn btn-info" style="float: right; margin: 20px 10px" data-toggle="modal" data-target="#exampleModalScrollable" @onclick="()=>OnEdit(movie)">Edit</button>
+          <button type="button" class="btn btn-danger" style="float: right; margin: 20px 10px" @onclick="()=>OnDelete(movie.Title)">Delete</button>
+        </p>
+      </div>
+    </div>
+  }
+  </div>
+</div>
+
+
+@if (ShowPopup)
+{
+    <div class="modal fade" id="exampleModalScrollable" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header" style="background-color: darkgray;">
+            <h5 class="modal-title" id="exampleModalScrollableTitle">Edit Movie</h5>
+            <button type="button" class="close" @onclick="ClosePopup" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" style="margin: 20px;">
+
+            <h5 class="card-title" style="margin-bottom: 20px;">Please enter movie details</h5>
+            <EditForm Model="MovieData" OnValidSubmit="CheckSubmit">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                @if (ShowErrors)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        <p style="margin-bottom: 1px;">@Error</p>
+                    </div>
+                }
+
+                <div class="form-group row">
+                    <label for="title" class="col-25">Title</label>
+                    <div class="col-75">
+                      <InputText type="text" class="form-control" @bind-Value="MovieData.Title"/>
+                      <ValidationMessage For="@(() => MovieData.Title)" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="director" class="col-25">Director</label>
+                    <div class="col-75">
+                      <InputText type="text" class="form-control" @bind-Value="MovieData.Director"/>
+                      <ValidationMessage For="@(() => MovieData.Director)" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="genre" class="col-25">Genre</label>
+                    <div class="col-75">
+                        <InputText type="text" class="form-control" @bind-Value="MovieData.Genre" />
+                        <ValidationMessage For="@(() => MovieData.Genre)" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="year" class="col-25">Year</label>
+                    <div class="col-75">
+                      <InputNumber type="number" class="form-control" @bind-Value="MovieData.Year"/>
+                      <ValidationMessage For="@(() => MovieData.Year)" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="imdb" class="col-25">Imdb</label>
+                    <div class="col-75">
+                      <InputNumber type="number" class="form-control" @bind-Value="MovieData.Imdb"/>
+                      <ValidationMessage For="@(() => MovieData.Imdb)" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="summery" class="col-25">Summery</label>
+                    <div class="col-75">
+                      <InputTextArea type="text" class="form-control" @bind-Value="MovieData.Summery" />
+                      <ValidationMessage For="@(() => MovieData.Summery)" />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="cover" class="col-25">Cover</label>
+                    <div class="col-75">
+                        <input type="file" @ref="theFile.inputReference" @onchange="async () => await theFile.OpenFileAsync()"/>
+                        <p style="font-size: small;">(If you don't want to change the cover, do not choose any file)</p>
+                        <ValidationMessage For="@(() => MovieData.ImageUrl)" />
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="float: right; margin: 20px 10px"> Done! </button>
+                <button type="cancle" @onclick="ClosePopup"  data-dismiss="modal" class="btn btn-danger" style="float: right; margin: 20px 10px"> Cancel </button>
+            </EditForm>
+          </div>
+        </div>
+      </div>
+    </div>
+
+}
+
+
+
+@code{
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask {get;set;}
+    private bool ShowPopup = false;
+    private MovieDataModel MovieData {get;set;}
+    private string PreviousTitle = "";
+    private string PreviousImage = "";
+    private bool ShowErrors;
+    private string Error = "";
+    private MovieDataModel[] AllYourMovies {get;set;} = {};
+    protected override async Task OnInitializedAsync()
+    {
+        var auth = await authenticationStateTask;
+        var username = auth.User.Identity.Name;
+        movie = new Movie(Http);
+        AllYourMovies = await movie.ShowingMovies(username);
+        theFile = new Files(Http , fileReader);
+    }
+
+    private void ClosePopup()
+    {
+        ShowPopup = false;
+        NavigationManager.NavigateTo("/you/movies",true);
+    }
+
+    private void OnDelete(string title)
+    {
+        movie.DeleteMovie(title);
+        NavigationManager.NavigateTo("/you/movies",true);
+    }
+    private void OnEdit(MovieDataModel theMovie)
+    {
+        PreviousTitle = theMovie.Title;
+        PreviousImage = theMovie.ImageUrl;
+        MovieData = theMovie;
+        ShowPopup = true;
+    }
+
+    private async void CheckSubmit() 
+    {
+        var response = await theFile.UploadFileAsync();
+        if(response == null)
+        {
+            MovieData.ImageUrl = PreviousImage;
+            SaveEdited();
+        }
+        else if(response.IsSuccessStatusCode)
+        {
+            string name = await response.Content.ReadAsStringAsync();
+            MovieData.ImageUrl = "/covers/" + name;
+            SaveEdited();
+        }
+        else
+        {
+            Error = await response.Content.ReadAsStringAsync();
+            ShowErrors = true;
+        }
+    }
+
+    private async void SaveEdited()
+    {
+        ShowPopup = false;
+        await movie.EditMovie(PreviousTitle,MovieData);
+        NavigationManager.NavigateTo("/you/movies" , true);
+    }
+
+}

@@ -1,0 +1,21 @@
+@page "/card"
+@using SharedData
+
+<div class="card col-5" style="margin: 30px;">
+  <img src="@MovieModel.ImageUrl" alt="cover" style="width:100% ; margin:15px 0px">
+  <div class="container" style="margin: 10px 0px;">
+    <h5><b>Title: </b>@MovieModel.Title</h5>
+    <h5><b>Director: </b>@MovieModel.Director</h5>
+    <h5><b>Genre: </b>@MovieModel.Genre</h5>
+    <h5><b>Year: </b>@MovieModel.Year</h5>
+    <h5><b>Imdb: </b>@MovieModel.Imdb</h5>
+    <h5><b>Summery: </b></h5>
+    <p>@MovieModel.Summery</p>
+  </div>
+</div>
+
+
+@code{
+    [Parameter]
+    public MovieDataModel MovieModel {get;set;}
+}

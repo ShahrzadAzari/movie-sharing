@@ -1,0 +1,66 @@
+{
+  "FilePath": "c:\\git\\AP98992\\final_project\\MovieSharing\\AppUI\\AppUI.csproj",
+  "Configuration": {
+    "ConfigurationName": "Default",
+    "LanguageVersion": "3.0",
+    "Extensions": []
+  },
+  "ProjectWorkspaceState": {
+    "TagHelpers": [],
+    "CSharpLanguageVersion": 800
+  },
+  "RootNamespace": "AppUI",
+  "Documents": [
+    {
+      "FilePath": "c:\\git\\AP98992\\final_project\\MovieSharing\\AppUI\\App.razor",
+      "TargetPath": "App.razor",
+      "FileKind": "component"
+    },
+    {
+      "FilePath": "c:\\git\\AP98992\\final_project\\MovieSharing\\AppUI\\Pages\\Logout.razor",
+      "TargetPath": "Pages\\Logout.razor",
+      "FileKind": "component"
+    },
+    {
+      "FilePath": "c:\\git\\AP98992\\final_project\\MovieSharing\\AppUI\\Pages\\Movies.razor",
+      "TargetPath": "Pages\\Movies.razor",
+      "FileKind": "component"
+    },
+    {
+      "FilePath": "c:\\git\\AP98992\\final_project\\MovieSharing\\AppUI\\_Imports.razor",
+      "TargetPath": "_Imports.razor",
+      "FileKind": "componentImport"
+    },
+    {
+      "FilePath": "c:\\git\\AP98992\\final_project\\MovieSharing\\AppUI\\Pages\\YourMovies.razor",
+      "TargetPath": "Pages\\YourMovies.razor",
+      "FileKind": "component"
+    },
+    {
+      "FilePath": "c:\\git\\AP98992\\final_project\\MovieSharing\\AppUI\\Pages\\Index.razor",
+      "TargetPath": "Pages\\Index.razor",
+      "FileKind": "component"
+    },
+    {
+      "FilePath": "c:\\git\\AP98992\\final_project\\MovieSharing\\AppUI\\Pages\\AddMovie.razor",
+      "TargetPath": "Pages\\AddMovie.razor",
+      "FileKind": "component"
+    },
+    {
+      "FilePath": "c:\\git\\AP98992\\final_project\\MovieSharing\\AppUI\\Pages\\PublicMovieComponent.razor",
+      "TargetPath": "Pages\\PublicMovieComponent.razor",
+      "FileKind": "component"
+    },
+    {
+      "FilePath": "c:\\git\\AP98992\\final_project\\MovieSharing\\AppUI\\Pages\\LogIn.razor",
+      "TargetPath": "Pages\\LogIn.razor",
+      "FileKind": "component"
+    },
+    {
+      "FilePath": "c:\\git\\AP98992\\final_project\\MovieSharing\\AppUI\\Pages\\Register.razor",
+      "TargetPath": "Pages\\Register.razor",
+      "FileKind": "component"
+    }
+  ],
+  "SerializationFormat": "0.2"
+}

@@ -1,0 +1,40 @@
+@page "/movies"
+@using SharedData
+@using Requests
+@using System.Net.Http
+@inject HttpClient Http
+@inject Movie movie
+
+<div class="topnav" id="myTopnav">
+  <a href="/">Home</a>
+  <a href="/movies" class="active">Movies</a>
+    <AuthorizeView>
+        <Authorized>
+        <a href="/you/movies">Your Movies</a>
+        <a href="/you/add">Add Movie</a>
+        <a href="/logout">Log out</a>
+        </Authorized>
+        <NotAuthorized>
+        <a href="/register">Sign up</a>
+        <a href="/login">Log in</a>
+        </NotAuthorized>
+    </AuthorizeView>
+</div>
+
+<div class="container" style="padding:10px;">
+  <div class="row justify-content-around">
+    @foreach(MovieDataModel movie in AllMovies)
+    {
+      <PublicMovieComponent MovieModel="@movie"></PublicMovieComponent>
+    }
+  </div>
+</div>
+
+@code{  
+    public MovieDataModel[] AllMovies {get;set;} = {};
+    protected override async Task OnInitializedAsync()
+    {
+      movie = new Movie(Http);
+      AllMovies = await movie.ShowingMovies();
+    }
+}
